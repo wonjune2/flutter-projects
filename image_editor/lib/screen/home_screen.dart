@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_editor/component/footer.dart';
 import 'package:image_editor/component/main_app_bar.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -18,13 +19,25 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand,
         children: [
-          MainAppBar(
-            onPickImage: onPickImage,
-            onSaveImage: onSaveImage,
-            onDeleteItem: onDeleteItem,
+          renderBody(),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: MainAppBar(
+              onPickImage: onPickImage,
+              onSaveImage: onSaveImage,
+              onDeleteItem: onDeleteItem,
+            ),
           ),
+          if (image != null)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Footer(onEmoticonTap: onEmoticonTap),
+            ),
           Text('Home'),
         ],
       ),
@@ -48,6 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
   }
+
+  void onEmoticonTap(int id) {}
 
   void onPickImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
