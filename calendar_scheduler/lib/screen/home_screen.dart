@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreenState extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   DateTime selectedDate = DateTime.utc(
     DateTime.now().year,
     DateTime.now().month,
