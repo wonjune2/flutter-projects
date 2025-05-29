@@ -1,3 +1,4 @@
+import 'package:calendar_scheduler/repository/auth_repository.dart';
 import 'package:calendar_scheduler/screen/auth_screen.dart';
 import 'package:calendar_scheduler/screen/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,9 @@ void main() async {
   await initializeDateFormatting();
 
   final scheduleRepository = ScheduleRepository();
-  final scheduleProvider =
-      ScheduleProvider(scheduleRepository: scheduleRepository);
+  final authRepository = AuthRepository();
+  final scheduleProvider = ScheduleProvider(
+      scheduleRepository: scheduleRepository, authRepository: authRepository);
 
   runApp(
     ChangeNotifierProvider(
