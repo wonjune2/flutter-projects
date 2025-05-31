@@ -59,7 +59,7 @@ class AuthRepository {
 
   Future<String> rotateAccessToken({required String refreshToken}) async {
     final result = await _dio.post(
-      '$_targetUrl/token/rotate',
+      '$_targetUrl/token/access',
       options: Options(
         headers: {
           'authorization': 'Bearer $refreshToken',
