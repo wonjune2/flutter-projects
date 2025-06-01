@@ -6,10 +6,15 @@ import 'package:calendar_scheduler/component/schedule_bottom_sheet.dart';
 import 'package:calendar_scheduler/const/colors.dart';
 import 'package:get_it/get_it.dart';
 import 'package:calendar_scheduler/database/drift_database.dart';
-import 'package:provider/provider.dart';  // ➊ Provider 불러오기
+import 'package:provider/provider.dart'; // ➊ Provider 불러오기
 import 'package:calendar_scheduler/provider/schedule_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   DateTime selectedDate = DateTime.utc(
     // ➋ 선택된 날짜를 관리할 변수
     DateTime.now().year,
@@ -18,9 +23,16 @@ class HomeScreen extends StatelessWidget {
   );
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ScheduleProvider>().getSchedules(date: selectedDate);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ScheduleProvider>();  // ➋ 프로바이더 변경이 있을 때마다 build() 함수 재실행
-    final selectedDate = provider.selectedDate;  // ➌ 선택된 날짜 가져오기
+    final provider =
+        context.watch<ScheduleProvider>(); // ➋ 프로바이더 변경이 있을 때마다 build() 함수 재실행
+    final selectedDate = provider.selectedDate; // ➌ 선택된 날짜 가져오기
     final schedules = provider.cache[selectedDate] ?? [];
 
     return Scaffold(
@@ -71,7 +83,8 @@ class HomeScreen extends StatelessWidget {
                     key: ObjectKey(schedule.id),
                     direction: DismissDirection.startToEnd,
                     onDismissed: (DismissDirection direction) {
-                      provider.deleteSchedule(date: selectedDate, id: schedule.id);  // ➊
+                      provider.deleteSchedule(
+                          date: selectedDate, id: schedule.id); // ➊
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(
@@ -93,15 +106,14 @@ class HomeScreen extends StatelessWidget {
   }
 
   void onDaySelected(
-      DateTime selectedDate,
-      DateTime focusedDate,
-      BuildContext context,
-      ) {
+    DateTime selectedDate,
+    DateTime focusedDate,
+    BuildContext context,
+  ) {
     final provider = context.read<ScheduleProvider>();
     provider.changeSelectedDate(
       date: selectedDate,
     );
     provider.getSchedules(date: selectedDate);
   }
-
 }

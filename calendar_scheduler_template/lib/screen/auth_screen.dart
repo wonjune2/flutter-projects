@@ -1,6 +1,10 @@
 import 'package:calendar_scheduler/component/login_text_field.dart';
 import 'package:calendar_scheduler/const/colors.dart';
+import 'package:calendar_scheduler/provider/schedule_provider.dart';
+import 'package:calendar_scheduler/screen/home_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -16,6 +20,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<ScheduleProvider>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(
@@ -78,7 +83,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 height: 16,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  onRegisterPress(provider);
+                },
                 child: Text('회원가입'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -89,7 +96,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  onLoginPress(provider);
+                },
                 child: Text('로그인'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -114,5 +123,65 @@ class _AuthScreenState extends State<AuthScreen> {
     formKey.currentState!.save();
 
     return true;
+  }
+
+  onRegisterPress(ScheduleProvider provider) async {
+    if (!saveAndValidateForm()) {
+      return;
+    }
+
+    String? message;
+
+    try {
+      await provider.register(
+        email: email,
+        password: password,
+      );
+    } on DioError catch (e) {
+      message = e.response?.data['message'] ?? '알 수 없는 오류가 발생했습니다.';
+    } catch (e) {
+      message = '알 수 없는 오류가 발생했습니다.';
+    } finally {
+      if (message != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+          ),
+        );
+      } else {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => HomeScreen()));
+      }
+    }
+  }
+
+  onLoginPress(ScheduleProvider provider) async {
+    if (!saveAndValidateForm()) {
+      return;
+    }
+
+    String? message;
+
+    try {
+      await provider.login(
+        email: email,
+        password: password,
+      );
+    } on DioError catch (e) {
+      message = e.response?.data['message'] ?? '알 수 없는 오류가 발생했습니다.';
+    } catch (e) {
+      message = '알 수 없는 오류가 발생했습니다.';
+    } finally {
+      if (message != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+          ),
+        );
+      } else {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => HomeScreen()));
+      }
+    }
   }
 }
